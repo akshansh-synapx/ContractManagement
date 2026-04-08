@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contract Management — ERD</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --dark-azure: #01263D;
+      --vivid-turquoise: #00E6C3;
+      --grey-azure: #5A6B7A;
+      --light-cyan: #9FF7F5;
+      --light-azure: #B1E5FC;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e8f5f0 50%, #f0f4ff 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: var(--dark-azure);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--dark-azure), var(--vivid-turquoise));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+    .header p {
+      color: var(--grey-azure);
+      font-size: 1rem;
+    }
+    .brand-tag {
+      display: inline-block;
+      background: var(--dark-azure);
+      color: var(--vivid-turquoise);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    .diagram-container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(1,38,61,0.08);
+      border: 1px solid rgba(0,230,195,0.2);
+      padding: 2rem;
+      max-width: 1100px;
+      margin: 0 auto 2.5rem;
+      overflow-x: auto;
+    }
+    .diagram-container .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+    .legend {
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+    .legend-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .legend-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .legend-card h3 .icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+    }
+    .icon.blue   { background: #dbeafe; color: #2563eb; }
+    .icon.green  { background: #d1fae5; color: #059669; }
+    .icon.purple { background: #ede9fe; color: #7c3aed; }
+    .icon.amber  { background: #fef3c7; color: #d97706; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.4rem 0.5rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    th { color: var(--grey-azure); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .col-type { color: #7c3aed; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.75rem; }
+    .pk { color: #d97706; font-weight: 700; }
+    .fk { color: #2563eb; }
+    .opt { color: #94a3b8; font-style: italic; }
+    .choice-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+    }
+    .choice-badge.type    { background: #dbeafe; color: #1e40af; }
+    .choice-badge.status  { background: #d1fae5; color: #065f46; }
+    .choice-badge.priority{ background: #fef3c7; color: #92400e; }
+    .option-sets {
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .option-sets h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; }
+    .os-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .os-item h4 { font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .os-item ul { list-style: none; padding: 0; }
+    .os-item li {
+      font-size: 0.8125rem;
+      padding: 0.25rem 0;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .os-item li .val { font-family: monospace; color: #7c3aed; min-width: 1.5rem; text-align: right; }
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--grey-azure);
+      font-size: 0.8125rem;
+    }
+    .footer strong { color: var(--dark-azure); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="brand-tag">SYNAPX</div>
+    <h1>Contract Management — Entity Relationship Diagram</h1>
+    <p>Dataverse data model for syn_docrequest, syn_discussion &amp; syn_docversion</p>
+  </div>
+
+  <!-- ── Mermaid ERD ──────────────────────────────────────────────── -->
+  <div class="diagram-container">
+    <pre class="mermaid">
+erDiagram
+    syn_docrequest {
+        uniqueidentifier syn_docrequestid PK
+        nvarchar syn_title
+        nvarchar syn_description
+        choice syn_requesttype "Legal | Contract"
+        choice syn_requeststatus "Open | In Discussion | In Review | Closed"
+        choice syn_priority "Low | Medium | High"
+        nvarchar syn_requestedby
+        nvarchar syn_assignedto "optional"
+        datetime syn_closedat "optional"
+        lookup syn_finalversionid "FK → syn_docversion"
+        datetime createdon "system"
+        datetime modifiedon "system"
+    }
+
+    syn_discussion {
+        uniqueidentifier syn_discussionid PK
+        nvarchar syn_name "auto-number"
+        uniqueidentifier syn_docrequestid FK
+        uniqueidentifier syn_docversionid "FK optional"
+        nvarchar syn_userid
+        nvarchar syn_username
+        ntext syn_message
+        datetime syn_timestamp
+        datetime createdon "system"
+        datetime modifiedon "system"
+    }
+
+    syn_docversion {
+        uniqueidentifier syn_docversionid PK
+        uniqueidentifier syn_docrequestid FK
+        nvarchar syn_title
+        int syn_versionnumber
+        nvarchar syn_documenturl
+        nvarchar syn_description "optional"
+        nvarchar syn_uploadedby
+        datetime syn_uploadedat
+        twooption syn_signedoff "Yes/No"
+        nvarchar syn_signedoffby "optional"
+        datetime syn_signedoffat "optional"
+        datetime createdon "system"
+        datetime modifiedon "system"
+    }
+
+    syn_docrequest ||--o{ syn_discussion : "has many"
+    syn_docrequest ||--o{ syn_docversion : "has many"
+    syn_docversion ||--o{ syn_discussion : "version comments"
+    syn_docrequest |o--o| syn_docversion : "final version"
+    </pre>
+  </div>
+
+  <!-- ── Column Details ───────────────────────────────────────────── -->
+  <div class="legend">
+
+    <!-- syn_docrequest -->
+    <div class="legend-card">
+      <h3><span class="icon blue">📋</span> syn_docrequest</h3>
+      <table>
+        <thead><tr><th>Column</th><th>Type</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">syn_docrequestid</td><td class="col-type">Guid</td><td>Primary Key</td></tr>
+          <tr><td>syn_title</td><td class="col-type">Text (200)</td><td>Required</td></tr>
+          <tr><td>syn_description</td><td class="col-type">Text (2000)</td><td>Required</td></tr>
+          <tr><td>syn_requesttype</td><td class="col-type">Choice</td><td><span class="choice-badge type">Legal | Contract</span></td></tr>
+          <tr><td>syn_requeststatus</td><td class="col-type">Choice</td><td><span class="choice-badge status">4 values</span></td></tr>
+          <tr><td>syn_priority</td><td class="col-type">Choice</td><td><span class="choice-badge priority">Low | Med | High</span></td></tr>
+          <tr><td>syn_requestedby</td><td class="col-type">Text (100)</td><td>Required</td></tr>
+          <tr><td>syn_assignedto</td><td class="col-type">Text (100)</td><td class="opt">Optional</td></tr>
+          <tr><td>syn_closedat</td><td class="col-type">DateTime</td><td class="opt">Set on close</td></tr>
+          <tr><td class="fk">syn_finalversionid</td><td class="col-type">Lookup</td><td>→ syn_docversion</td></tr>
+          <tr><td>createdon</td><td class="col-type">DateTime</td><td class="opt">System</td></tr>
+          <tr><td>modifiedon</td><td class="col-type">DateTime</td><td class="opt">System</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- syn_discussion -->
+    <div class="legend-card">
+      <h3><span class="icon green">💬</span> syn_discussion</h3>
+      <table>
+        <thead><tr><th>Column</th><th>Type</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">syn_discussionid</td><td class="col-type">Guid</td><td>Primary Key</td></tr>
+          <tr><td>syn_name</td><td class="col-type">Autonumber</td><td>DISC-{0000}</td></tr>
+          <tr><td class="fk">syn_docrequestid</td><td class="col-type">Lookup</td><td>→ syn_docrequest</td></tr>
+          <tr><td class="fk">syn_docversionid</td><td class="col-type">Lookup</td><td class="opt">→ syn_docversion (opt)</td></tr>
+          <tr><td>syn_userid</td><td class="col-type">Text (100)</td><td>User ID</td></tr>
+          <tr><td>syn_username</td><td class="col-type">Text (200)</td><td>Display name</td></tr>
+          <tr><td>syn_message</td><td class="col-type">Multiline</td><td>Chat message</td></tr>
+          <tr><td>syn_timestamp</td><td class="col-type">DateTime</td><td>Sent at</td></tr>
+          <tr><td>createdon</td><td class="col-type">DateTime</td><td class="opt">System</td></tr>
+          <tr><td>modifiedon</td><td class="col-type">DateTime</td><td class="opt">System</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- syn_docversion -->
+    <div class="legend-card">
+      <h3><span class="icon purple">📄</span> syn_docversion</h3>
+      <table>
+        <thead><tr><th>Column</th><th>Type</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">syn_docversionid</td><td class="col-type">Guid</td><td>Primary Key</td></tr>
+          <tr><td class="fk">syn_docrequestid</td><td class="col-type">Lookup</td><td>→ syn_docrequest</td></tr>
+          <tr><td>syn_title</td><td class="col-type">Text (200)</td><td>Version title</td></tr>
+          <tr><td>syn_versionnumber</td><td class="col-type">Whole Number</td><td>Auto-increment</td></tr>
+          <tr><td>syn_documenturl</td><td class="col-type">URL (500)</td><td>Doc link</td></tr>
+          <tr><td>syn_description</td><td class="col-type">Text (2000)</td><td class="opt">Change notes</td></tr>
+          <tr><td>syn_uploadedby</td><td class="col-type">Text (200)</td><td>Who uploaded</td></tr>
+          <tr><td>syn_uploadedat</td><td class="col-type">DateTime</td><td>Upload time</td></tr>
+          <tr><td>syn_signedoff</td><td class="col-type">Two-Option</td><td>Yes / No</td></tr>
+          <tr><td>syn_signedoffby</td><td class="col-type">Text (200)</td><td class="opt">Approver</td></tr>
+          <tr><td>syn_signedoffat</td><td class="col-type">DateTime</td><td class="opt">Approval time</td></tr>
+          <tr><td>createdon</td><td class="col-type">DateTime</td><td class="opt">System</td></tr>
+          <tr><td>modifiedon</td><td class="col-type">DateTime</td><td class="opt">System</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Relationships -->
+    <div class="legend-card">
+      <h3><span class="icon amber">🔗</span> Relationships</h3>
+      <table>
+        <thead><tr><th>From</th><th>To</th><th>Cardinality</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>syn_docrequest</strong></td>
+            <td>syn_discussion</td>
+            <td>1 : N — A request has many discussions</td>
+          </tr>
+          <tr>
+            <td><strong>syn_docrequest</strong></td>
+            <td>syn_docversion</td>
+            <td>1 : N — A request has many versions</td>
+          </tr>
+          <tr>
+            <td><strong>syn_docversion</strong></td>
+            <td>syn_discussion</td>
+            <td>1 : N — A version can have discussions (optional FK)</td>
+          </tr>
+          <tr>
+            <td><strong>syn_docrequest</strong></td>
+            <td>syn_docversion</td>
+            <td>1 : 0..1 — Final signed-off version (syn_finalversionid)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Option Sets ──────────────────────────────────────────────── -->
+  <div class="option-sets">
+    <h3>⚙️ Option Sets (Choice Fields)</h3>
+    <div class="os-grid">
+      <div class="os-item">
+        <h4>syn_requesttype</h4>
+        <ul>
+          <li><span class="val">0</span> Legal</li>
+          <li><span class="val">1</span> Contract</li>
+        </ul>
+      </div>
+      <div class="os-item">
+        <h4>syn_requeststatus</h4>
+        <ul>
+          <li><span class="val">0</span> Open</li>
+          <li><span class="val">1</span> In Discussion</li>
+          <li><span class="val">2</span> In Review</li>
+          <li><span class="val">3</span> Closed</li>
+        </ul>
+      </div>
+      <div class="os-item">
+        <h4>syn_priority</h4>
+        <ul>
+          <li><span class="val">0</span> Low</li>
+          <li><span class="val">1</span> Medium</li>
+          <li><span class="val">2</span> High</li>
+        </ul>
+      </div>
+      <div class="os-item">
+        <h4>syn_signedoff (Two-Option)</h4>
+        <ul>
+          <li><span class="val">0</span> No (false)</li>
+          <li><span class="val">1</span> Yes (true)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <strong>Synapx</strong> Contract Management &mdash; Dataverse Schema v1.0<br/>
+    Publisher prefix: <code>syn_</code> &nbsp;|&nbsp; 3 tables &nbsp;|&nbsp; 4 relationships &nbsp;|&nbsp; 3 option sets + 1 two-option
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#01263D',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#00E6C3',
+        secondaryColor: '#d1fae5',
+        tertiaryColor: '#ede9fe',
+        fontSize: '13px',
+      },
+      er: {
+        diagramPadding: 30,
+        layoutDirection: 'TB',
+        minEntityWidth: 100,
+        minEntityHeight: 75,
+        entityPadding: 15,
+        useMaxWidth: true,
+      },
+    });
+  </script>
+</body>
+</html>
