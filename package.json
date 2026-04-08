@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://AkshanshCoder.github.io/ContractManagement",
+  "homepage": "https://akshansh-synapx.github.io/ContractManagement",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
